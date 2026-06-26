@@ -1,0 +1,16 @@
+chunk_overlap: 50
+chunk_size: 512
+llm:
+  groq_api_key: ''
+  groq_model: llama3.2
+  ollama_endpoint: http://localhost:11434
+  ollama_model: llama3.2
+  provider: ollama
+model_name: all-MiniLM-L6-v2
+shaktidb:
+  database: shaktivector
+  host: localhost
+  password: shaktidb
+  port: 5432
+  user: shaktidb
+top_k: 4
