@@ -1,9 +1,10 @@
 const BASE = import.meta.env.VITE_API_BASE || ""
 
 async function request(url, options = {}) {
+  const { headers: customHeaders, ...rest } = options
   const res = await fetch(`${BASE}${url}`, {
-    headers: { "Content-Type": "application/json", ...options.headers },
-    ...options,
+    ...rest,
+    headers: { "Content-Type": "application/json", ...customHeaders },
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))

@@ -7,6 +7,7 @@ from fastapi import FastAPI, UploadFile, File, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+from typing import Optional
 
 from chunker import extract_text, chunk_text
 from embedder import Embedder
@@ -38,7 +39,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024
 
 class AskRequest(BaseModel):
     query: str
-    k: int = Field(default=None, ge=1, le=50)
+    k: Optional[int] = Field(default=None, ge=1, le=50)
 
 
 @app.get("/")
@@ -168,7 +169,7 @@ def ask(req: AskRequest):
 
 class DebugAskRequest(BaseModel):
     query: str
-    k: int = Field(default=None, ge=1, le=50)
+    k: Optional[int] = Field(default=None, ge=1, le=50)
 
 
 @app.post("/ask/debug")
@@ -260,12 +261,12 @@ def get_config():
 
 
 class ConfigUpdate(BaseModel):
-    llm_provider: str = None
-    llm_model: str = None
-    groq_api_key: str = None
-    chunk_size: int = None
-    chunk_overlap: int = None
-    top_k: int = None
+    llm_provider: Optional[str] = None
+    llm_model: Optional[str] = None
+    groq_api_key: Optional[str] = None
+    chunk_size: Optional[int] = None
+    chunk_overlap: Optional[int] = None
+    top_k: Optional[int] = None
 
 
 @app.put("/config")
@@ -305,8 +306,8 @@ def search(q: str = Query(..., min_length=1), k: int = Query(3, ge=1, le=20)):
 def list_documents():
     import psycopg2
     with open("config.yaml") as f:
-        cfg = yaml.safe_load(f)["shaktidb"]
-    conn = psycopg2.connect(host=cfg["host"], port=cfg["port"], database=cfg["database"], user=cfg["user"], password=cfg["password"])
+        db_cfg = yaml.safe_load(f)["shaktidb"]
+    conn = psycopg2.connect(host=db_cfg["host"], port=db_cfg["port"], database=db_cfg["database"], user=db_cfg["user"], password=db_cfg["password"])
     cur = conn.cursor()
     cur.execute("SELECT id, filename, total_chunks FROM documents ORDER BY upload_date DESC")
     rows = cur.fetchall()

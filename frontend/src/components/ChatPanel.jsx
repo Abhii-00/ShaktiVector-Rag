@@ -93,7 +93,9 @@ export default function ChatPanel({ onSourceClick, showToast, pipelineMode, sugg
         setStreamingContent(content)
       },
       onDone: (sources) => {
-        finalSources = sources || []
+        if (sources && sources.length > 0) {
+          finalSources = sources
+        }
       },
       onError: (e) => {
         showToast?.(e.message, "error")
